@@ -33,7 +33,7 @@ app.get("/api/me", protect, getCurrentUser)
 
 app.get("/", (req, res) => {
   res.json({
-    message: "hello from gateway",
+    message: "hello from gateway"
   })
 })
 
