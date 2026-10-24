@@ -1,0 +1,141 @@
+services:
+  - type: web
+    name: vertexai-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SERVER_URL
+        sync: false
+      - key: VITE_TERMINAL_SERVICE_URL
+        sync: false
+      - key: VITE_FIREBASE_API_KEY
+        sync: false
+
+  - type: web
+    name: vertexai-gateway
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./gateway/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: FRONTEND_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: AUTH_SERVICE
+        sync: false
+      - key: PROJECT_SERVICE
+        sync: false
+      - key: FILE_SERVICE
+        sync: false
+      - key: AI_SERVICE
+        sync: false
+      - key: TERMINAL_SERVICE
+        sync: false
+      - key: PAYMENT_SERVICE
+        sync: false
+
+  - type: web
+    name: vertexai-terminal
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./services/terminal/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: FRONTEND_URL
+        sync: false
+      - key: FILE_SERVICE_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+  - type: web
+    name: vertexai-auth
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./services/auth/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+
+  - type: web
+    name: vertexai-project
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./services/project/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+  - type: web
+    name: vertexai-file
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./services/file/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+  - type: web
+    name: vertexai-ai
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./services/ai/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: FILE_SERVICE_URL
+        sync: false
+      - key: AUTH_SERVICE
+        sync: false
+
+  - type: web
+    name: vertexai-payment
+    env: docker
+    rootDir: backend
+    dockerfilePath: ./services/payment/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: AUTH_SERVICE
+        sync: false
